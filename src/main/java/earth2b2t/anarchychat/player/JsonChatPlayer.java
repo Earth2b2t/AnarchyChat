@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -18,7 +19,7 @@ public class JsonChatPlayer implements ChatPlayer {
     private final UUID uniqueId;
     private final String name;
     private final List<Ignore> ignoreList;
-    private final HashMap<String, Ignore> nameIndex;
+    private final Map<String, Ignore> nameIndex;
     private String lastMessageSentBy;
     private LocalDateTime lastMessageReceivedAt;
 
@@ -26,8 +27,8 @@ public class JsonChatPlayer implements ChatPlayer {
         this.chatPlayerRepository = chatPlayerRepository;
         this.uniqueId = uniqueId;
         this.name = name;
-        this.ignoreList = new ArrayList<>(ignoreList);
-        this.nameIndex = new HashMap<>();
+        this.ignoreList = Collections.synchronizedList(new ArrayList<>(ignoreList));
+        this.nameIndex = Collections.synchronizedMap(new HashMap<>());
         for (Ignore ignore : ignoreList) {
             nameIndex.put(ignore.getName(), ignore);
         }
