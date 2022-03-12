@@ -1,0 +1,23 @@
+name: AnarhyChat
+version: 1.0.0
+main: earth2b2t.anarchychat.AnarchyChatPlugin
+commands:
+  ignore:
+    usage: /ignore <name>
+    description: Ignore a player
+    permission: anarchychat.ignore
+  ignorehard:
+    usage: /ignorehard <name>
+    permission: anarchychat.ignorehard
+    description: Ignore a player permanently
+  ignorelist:
+    usage: /ignorelist
+    description: Show ignored players
+    permission: anarchychat.ignorelist
+permissions:
+  anarchychat.ignore:
+    default: true
+  anarchychat.ignorehard:
+    default: true
+  anarchychat.ignorelist:
+    default: true
