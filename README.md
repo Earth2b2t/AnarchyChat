@@ -2,13 +2,13 @@
 
 A simple chat management plugin
 
-# Features
+## Features
 
 * Hard to abuse because ignore list is name based
 * High performance thanks to H2 SQL
 * Disables vanilla /tell command
 
-# Commands
+## Commands
 
 | Command            | Description                                 | Permission                       | Aliases                      |
 |--------------------|---------------------------------------------|----------------------------------|------------------------------|
@@ -22,7 +22,7 @@ A simple chat management plugin
 | /pmute <name>      | Prevent a player from using private message | anarchychat.pmute (op)           |                              |
 | /mutelist          | Show muted players                          | anarchychat.mutelist (op)        |                              |
 
-# Screenshots
+## Screenshots
 
 /ignorelist
 
