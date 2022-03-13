@@ -53,7 +53,7 @@ public class MuteCommand implements CommandExecutor {
             }
         } else {
             mutePlayer.setPrivateMuted(!mutePlayer.isPrivateMuted());
-            if (mutePlayer.isGlobalMuted()) {
+            if (mutePlayer.isPrivateMuted()) {
                 i18n.print(sender, "anarchychat.gmute.player-private-muted", args[0]);
             } else {
                 i18n.print(sender, "anarchychat.gmute.player-private-unmuted", args[0]);
