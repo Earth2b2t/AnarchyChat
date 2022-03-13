@@ -24,6 +24,10 @@ commands:
     description: Reply to a player
     permission: anarchychat.reply
     aliases: [ "r" ]
+  ignorelang:
+    usage: /ignorelang <language>
+    description: Change preferred language
+    permission: anarchychat.ignorelang
 permissions:
   anarchychat.ignore:
     default: true
@@ -34,4 +38,6 @@ permissions:
   anarchychat.tell:
     default: true
   anarchychat.reply:
+    default: true
+  anarchychat.ignorelang:
     default: true
