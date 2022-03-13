@@ -18,7 +18,12 @@ commands:
     usage: /tell <name> <message...>
     description: Send message to a player
     permission: anarchychat.tell
-    aliases: ["message", "msg", "whisper", "w"]
+    aliases: [ "message", "msg", "whisper", "w" ]
+  reply:
+    usage: /reply <message...>
+    description: Reply to a player
+    permission: anarchychat.reply
+    aliases: [ "r" ]
 permissions:
   anarchychat.ignore:
     default: true
@@ -27,4 +32,6 @@ permissions:
   anarchychat.ignorelist:
     default: true
   anarchychat.tell:
+    default: true
+  anarchychat.reply:
     default: true

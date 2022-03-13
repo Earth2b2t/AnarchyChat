@@ -3,6 +3,7 @@ package earth2b2t.anarchychat;
 import earth2b2t.anarchychat.command.IgnoreCommand;
 import earth2b2t.anarchychat.command.IgnoreHardCommand;
 import earth2b2t.anarchychat.command.IgnoreListCommand;
+import earth2b2t.anarchychat.command.ReplyCommand;
 import earth2b2t.anarchychat.command.TellCommand;
 import earth2b2t.anarchychat.player.JsonChatPlayerRepository;
 import earth2b2t.anarchychat.service.IgnoreService;
@@ -37,6 +38,7 @@ public class AnarchyChatPlugin extends JavaPlugin {
         getCommand("ignore").setExecutor(new IgnoreCommand(chatPlayerRepository));
         getCommand("ignorehard").setExecutor(new IgnoreHardCommand());
         getCommand("ignorelist").setExecutor(new IgnoreListCommand(chatPlayerRepository));
+        getCommand("reply").setExecutor(new ReplyCommand(chatPlayerRepository));
         getCommand("tell").setExecutor(new TellCommand(chatPlayerRepository));
 
         register(new IgnoreService(chatPlayerRepository));
