@@ -34,7 +34,7 @@ public class MuteCommand implements CommandExecutor {
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("global")) {
                 global = true;
-            } else if (args[2].equalsIgnoreCase("private")) {
+            } else if (args[1].equalsIgnoreCase("private")) {
                 global = false;
             } else {
                 i18n.print(sender, "anarchychat.gmute.invalid-mute-type");

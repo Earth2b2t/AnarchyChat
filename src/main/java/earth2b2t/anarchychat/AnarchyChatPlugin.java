@@ -68,9 +68,9 @@ public class AnarchyChatPlugin extends JavaPlugin {
         getCommand("mutelist").setExecutor(new MuteListCommand(mutePlayerRepository));
         getCommand("pmute").setExecutor(new PMuteCommand());
         getCommand("reply").setExecutor(new ReplyCommand(ignorePlayerRepository));
-        getCommand("tell").setExecutor(new TellCommand(ignorePlayerRepository));
+        getCommand("tell").setExecutor(new TellCommand(ignorePlayerRepository, mutePlayerRepository));
 
-        register(new IgnoreService(ignorePlayerRepository));
+        register(new IgnoreService(ignorePlayerRepository, mutePlayerRepository));
         register(new TellPreventService());
     }
 

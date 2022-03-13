@@ -52,11 +52,11 @@ public class MuteListCommand implements CommandExecutor {
             String type;
             MutePlayer mutePlayer = muteList.get(i);
             if (mutePlayer.isGlobalMuted() && mutePlayer.isPrivateMuted()) {
-                type = "global/private";
+                type = ChatColor.DARK_AQUA + "global" + ChatColor.GRAY + "/" + ChatColor.DARK_AQUA + "private";
             } else if (mutePlayer.isGlobalMuted()) {
-                type = "global";
+                type = ChatColor.DARK_AQUA + "global";
             } else {
-                type = "private";
+                type = ChatColor.DARK_AQUA + "private";
             }
             sender.spigot().sendMessage(new ComponentBuilder("")
                     .append(mutePlayer.getName())
@@ -65,7 +65,6 @@ public class MuteListCommand implements CommandExecutor {
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mute " + mutePlayer.getName()))
                     .append(" [")
                     .append(type)
-                    .color(ChatColor.DARK_AQUA)
                     .append("]")
                     .color(ChatColor.GOLD)
                     .create());
