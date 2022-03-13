@@ -28,6 +28,19 @@ commands:
     usage: /ignorelang <language>
     description: Change preferred language
     permission: anarchychat.ignorelang
+  mute:
+    usage: /mute <name>
+    description: Mute a player
+    permission: anarchychat.mute
+    aliases: [ "mute", "gmute" ]
+  pmute:
+    usage: /pmute <name>
+    description: Prevents a player from using private message
+    permission: anarchychat.pmute
+  mutelist:
+    usage: /mute <name>
+    description: Mute a player
+    permission: anarchychat.mute
 permissions:
   anarchychat.ignore:
     default: true
@@ -41,3 +54,7 @@ permissions:
     default: true
   anarchychat.ignorelang:
     default: true
+  anarchychat.mute:
+    default: op
+  anarchychat.mutelist:
+    default: op

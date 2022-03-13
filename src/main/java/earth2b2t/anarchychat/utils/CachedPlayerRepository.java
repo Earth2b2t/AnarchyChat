@@ -53,7 +53,9 @@ abstract public class CachedPlayerRepository<T extends IgnorePlayer & MutePlayer
                 .findAny().orElse(null);
         if (result == null) {
             result = load(null, name);
-            offlineCache.add(result);
+            if (result != null) {
+                offlineCache.add(result);
+            }
         }
         return Optional.ofNullable(result);
     }

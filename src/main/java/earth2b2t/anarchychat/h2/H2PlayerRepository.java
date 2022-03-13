@@ -19,8 +19,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -90,14 +91,16 @@ public class H2PlayerRepository extends CachedPlayerRepository<H2Player> impleme
     }
 
     @Override
-    public Collection<MutePlayer> findAll() {
-        HashSet<MutePlayer> result = new HashSet<>();
-
+    public List<MutePlayer> findAll() {
         try (Connection connection = hikariDataSource.getConnection()) {
+
+            TreeSet<MutePlayer> result = new TreeSet<>(Comparator.comparing(MutePlayer::getName));
+
             PreparedStatement preparedStatement = connection.prepareStatement("""
                     SELECT * FROM players WHERE global_muted = TRUE OR private_muted = TRUE;
                     """);
             ResultSet resultSet = preparedStatement.executeQuery();
+
             if (resultSet.next()) {
                 UUID uuid = (UUID) resultSet.getObject("unique_id");
                 Player player = Bukkit.getPlayer(uuid);
@@ -112,10 +115,11 @@ public class H2PlayerRepository extends CachedPlayerRepository<H2Player> impleme
                     result.add(h2Player);
                 }
             }
+
+            return new ArrayList<>(result);
         } catch (SQLException e) {
             throw new UncheckedSQLException(e);
         }
-        return result;
     }
 
     public void setIgnoreType(H2Player h2Player, String name, IgnoreType ignoreType) {

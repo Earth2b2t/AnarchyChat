@@ -1,6 +1,6 @@
 package earth2b2t.anarchychat.mute;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,5 +10,5 @@ public interface MutePlayerRepository {
 
     Optional<MutePlayer> findByName(String name);
 
-    Collection<MutePlayer> findAll();
+    List<MutePlayer> findAll();
 }
