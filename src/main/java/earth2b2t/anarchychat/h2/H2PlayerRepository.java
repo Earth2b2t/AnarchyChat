@@ -63,6 +63,25 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
         return ignoreList;
     }
 
+    private H2Player loadH2Player(Connection connection, Player p) throws SQLException {
+        PreparedStatement replace = connection.prepareStatement("""
+                MERGE INTO players AS t USING (VALUES(?, ?, ?, ?))
+                    AS s(unique_id, name, global_muted, private_muted)
+                    ON t.unique_id = s.unique_id
+                WHEN MATCHED THEN
+                    UPDATE SET name = s.name
+                WHEN NOT MATCHED THEN
+                    INSERT VALUES(s.unique_id, s.name, s.global_muted, s.private_muted);
+                """);
+        replace.setObject(1, p.getUniqueId());
+        replace.setString(2, p.getName());
+        replace.setBoolean(3, false);
+        replace.setBoolean(4, false);
+        replace.execute();
+        return new H2Player(this, p.getUniqueId(), p.getName(),
+                false, false, loadIgnoreList(connection, p.getUniqueId()));
+    }
+
     @Override
     public Optional<MutePlayer> findByUniqueId(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
@@ -211,23 +230,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                     h2PlayerCache.put(p, h2Player);
                 }, () -> {
                     try (Connection connection = hikariDataSource.getConnection()) {
-                        PreparedStatement replace = connection.prepareStatement("""
-                                MERGE INTO players AS t USING (VALUES(?, ?, ?, ?))
-                                    AS s(unique_id, name, global_muted, private_muted)
-                                    ON t.unique_id = s.unique_id
-                                WHEN MATCHED THEN
-                                    UPDATE SET name = s.name
-                                WHEN NOT MATCHED THEN
-                                    INSERT VALUES(s.unique_id, s.name, s.global_muted, s.private_muted);
-                                """);
-                        replace.setObject(1, p.getUniqueId());
-                        replace.setString(2, p.getName());
-                        replace.setBoolean(3, false);
-                        replace.setBoolean(4, false);
-                        replace.execute();
-                        H2Player h2Player = new H2Player(this, p.getUniqueId(), p.getName(),
-                                false, false, loadIgnoreList(connection, e.getPlayer().getUniqueId()));
-                        h2PlayerCache.put(e.getPlayer(), h2Player);
+                        h2PlayerCache.put(e.getPlayer(), loadH2Player(connection, e.getPlayer()));
                     } catch (SQLException ex) {
                         throw new UncheckedSQLException(ex);
                     }
@@ -268,6 +271,14 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
 
         H2PlayerRepository h2PlayerRepository = new H2PlayerRepository(hikariDataSource);
         Bukkit.getPluginManager().registerEvents(h2PlayerRepository, plugin);
+
+        try (Connection connection = hikariDataSource.getConnection()) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                h2PlayerRepository.h2PlayerCache.put(player, h2PlayerRepository.loadH2Player(connection, player));
+            }
+        } catch (SQLException ex) {
+            throw new UncheckedSQLException(ex);
+        }
         return h2PlayerRepository;
     }
 }
