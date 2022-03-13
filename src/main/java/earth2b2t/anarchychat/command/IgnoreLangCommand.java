@@ -17,12 +17,16 @@ public class IgnoreLangCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length < 1) {
+        if (args.length < 1) {
             i18n.print(sender, "anarchychat.lang.language-not-specified");
             return true;
         }
         i18n.getLanguageProvider().update(player.getUniqueId(), args[0]);
-        i18n.print(sender, "anarchychat.lang.language-updated");
+
+        boolean quiet = args.length > 1 && args[1].equalsIgnoreCase("quiet");
+        if (!quiet) {
+            i18n.print(sender, "anarchychat.lang.language-updated");
+        }
         return true;
     }
 }
