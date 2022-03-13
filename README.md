@@ -21,3 +21,13 @@ A simple chat management plugin
 | /mute <name>       | Mute a player                               | anarchychat.mute (op)            |                              |
 | /pmute <name>      | Prevent a player from using private message | anarchychat.pmute (op)           |                              |
 | /mutelist          | Show muted players                          | anarchychat.mutelist (op)        |                              |
+
+# Screenshots
+
+/ignorelist
+
+![image](https://user-images.githubusercontent.com/26406334/158069985-9f8e6bbe-7526-4ee5-8e70-84e726c02b01.png)
+
+/mute
+
+![image](https://user-images.githubusercontent.com/26406334/158069845-34667f6e-5c91-4c13-8d13-43ea30184dae.png)
