@@ -14,20 +14,17 @@ commands:
     usage: /ignorelist
     description: Show ignored players
     permission: anarchychat.ignorelist
-  msg:
-    usage: /msg <name> <message...>g
-    description: Send message to a player
-    permission: anarchychat.msg
   tell:
     usage: /tell <name> <message...>
+    description: Send message to a player
+    permission: anarchychat.tell
+    aliases: ["message", "msg", "whisper", "w"]
 permissions:
   anarchychat.ignore:
     default: true
   anarchychat.ignorehard:
     default: true
   anarchychat.ignorelist:
-    default: true
-  anarchychat.msg:
     default: true
   anarchychat.tell:
     default: true
