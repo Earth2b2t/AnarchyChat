@@ -8,6 +8,7 @@ import earth2b2t.anarchychat.command.TellCommand;
 import earth2b2t.anarchychat.player.JsonChatPlayerRepository;
 import earth2b2t.anarchychat.service.IgnoreService;
 import earth2b2t.anarchychat.service.Service;
+import earth2b2t.anarchychat.service.TellPreventService;
 import earth2b2t.i18n.BukkitI18n;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -41,6 +42,7 @@ public class AnarchyChatPlugin extends JavaPlugin {
         getCommand("tell").setExecutor(new TellCommand(chatPlayerRepository));
 
         register(new IgnoreService(chatPlayerRepository));
+        register(new TellPreventService());
     }
 
     @Override
