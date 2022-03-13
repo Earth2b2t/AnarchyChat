@@ -72,7 +72,8 @@ public class IgnoreListCommand implements CommandExecutor {
                     .create());
         }
 
-        sender.spigot().sendMessage(new ComponentBuilder("")
+        sender.sendMessage("");
+        sender.spigot().sendMessage(new ComponentBuilder("           ")
                 .append("<<  ")
                 .color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(i18n.plain(sender, "anarchychat.ignorelist.go-to-top"))))
