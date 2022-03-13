@@ -2,8 +2,8 @@ package earth2b2t.anarchychat;
 
 import earth2b2t.anarchychat.command.IgnoreCommand;
 import earth2b2t.anarchychat.command.IgnoreHardCommand;
-import earth2b2t.anarchychat.command.IgnoreListCommand;
 import earth2b2t.anarchychat.command.IgnoreLangCommand;
+import earth2b2t.anarchychat.command.IgnoreListCommand;
 import earth2b2t.anarchychat.command.ReplyCommand;
 import earth2b2t.anarchychat.command.TellCommand;
 import earth2b2t.anarchychat.player.JsonChatPlayerRepository;

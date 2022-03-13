@@ -36,6 +36,18 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
     private final Plugin plugin;
     private final Path dataFolder;
 
+    public static JsonChatPlayerRepository create(Plugin plugin, Path dataFolder) {
+        JsonChatPlayerRepository chatPlayerRepository = new JsonChatPlayerRepository(plugin, dataFolder);
+        Bukkit.getPluginManager().registerEvents(chatPlayerRepository, plugin);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            JsonChatPlayer chatPlayer = chatPlayerRepository.load(player.getUniqueId(), player.getName());
+            chatPlayerRepository.chatPlayerMap.put(player, chatPlayer);
+        }
+
+        return chatPlayerRepository;
+    }
+
     @Override
     public ChatPlayer findByPlayer(Player player) {
         return chatPlayerMap.get(player);
@@ -87,17 +99,5 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         chatPlayerMap.remove(e.getPlayer());
-    }
-
-    public static JsonChatPlayerRepository create(Plugin plugin, Path dataFolder) {
-        JsonChatPlayerRepository chatPlayerRepository = new JsonChatPlayerRepository(plugin, dataFolder);
-        Bukkit.getPluginManager().registerEvents(chatPlayerRepository, plugin);
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            JsonChatPlayer chatPlayer = chatPlayerRepository.load(player.getUniqueId(), player.getName());
-            chatPlayerRepository.chatPlayerMap.put(player, chatPlayer);
-        }
-
-        return chatPlayerRepository;
     }
 }

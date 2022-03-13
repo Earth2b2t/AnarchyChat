@@ -27,7 +27,7 @@ public class IgnoreCommand implements CommandExecutor {
             i18n.print(sender, "anarchychat.ignore.player-not-specified");
             return true;
         }
-        if(args[0].length() > 16) {
+        if (args[0].length() > 16) {
             i18n.print(sender, "anarchychat.ignore.player-name-too-long");
         }
 
