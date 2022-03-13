@@ -30,17 +30,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRepository, Listener, Closeable {
 
     private final HikariDataSource hikariDataSource;
-    private final Map<Player, H2Player> h2PlayerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Player, H2Player> h2PlayerCache = Collections.synchronizedMap(new HashMap<>());
+    private final Set<H2Player> h2OfflineCache = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
     public H2Player findByPlayer(Player player) {
-        return h2PlayerMap.get(player);
+        return h2PlayerCache.get(player);
     }
 
     private ArrayList<Ignore> loadIgnoreList(Connection connection, UUID uuid) throws SQLException {
@@ -63,7 +66,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     @Override
     public Optional<MutePlayer> findByUniqueId(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
-        if (player != null) return Optional.of(h2PlayerMap.get(player));
+        if (player != null) return Optional.of(findByPlayer(player));
 
         try (Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("""
@@ -75,7 +78,9 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 String name = resultSet.getString("name");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
-                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
+                H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
+                h2OfflineCache.add(h2Player);
+                return Optional.of(h2Player);
             } else {
                 return Optional.empty();
             }
@@ -87,9 +92,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     @Override
     public Optional<MutePlayer> findByName(String name) {
         Player player = Bukkit.getPlayerExact(name);
-        if (player != null) {
-            return Optional.of(h2PlayerMap.get(player));
-        }
+        if (player != null) return Optional.of(findByPlayer(player));
 
         try (Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("""
@@ -101,7 +104,9 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 UUID uuid = (UUID) resultSet.getObject("unique_id");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
-                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
+                H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
+                h2OfflineCache.add(h2Player);
+                return Optional.of(h2Player);
             } else {
                 return Optional.empty();
             }
@@ -121,10 +126,17 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 UUID uuid = (UUID) resultSet.getObject("unique_id");
-                String name = resultSet.getString("name");
-                boolean globalMuted = resultSet.getBoolean("global_muted");
-                boolean privateMuted = resultSet.getBoolean("private_muted");
-                result.add(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    result.add(findByPlayer(player));
+                } else {
+                    String name = resultSet.getString("name");
+                    boolean globalMuted = resultSet.getBoolean("global_muted");
+                    boolean privateMuted = resultSet.getBoolean("private_muted");
+                    H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
+                    h2OfflineCache.add(h2Player);
+                    result.add(h2Player);
+                }
             }
         } catch (SQLException e) {
             throw new UncheckedSQLException(e);
@@ -191,36 +203,41 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-
-        try (Connection connection = hikariDataSource.getConnection()) {
-            PreparedStatement replace = connection.prepareStatement("""
-                    MERGE INTO players AS t USING (VALUES(?, ?, ?, ?))
-                        AS s(unique_id, name, global_muted, private_muted)
-                        ON t.unique_id = s.unique_id
-                    WHEN MATCHED THEN
-                        UPDATE SET name = s.name
-                    WHEN NOT MATCHED THEN
-                        INSERT VALUES(s.unique_id, s.name, s.global_muted, s.private_muted);
-                    """);
-            replace.setObject(1, p.getUniqueId());
-            replace.setString(2, p.getName());
-            replace.setBoolean(3, false);
-            replace.setBoolean(4, false);
-            replace.execute();
-            H2Player h2Player = new H2Player(this, p.getUniqueId(), p.getName(),
-                    false, false, loadIgnoreList(connection, e.getPlayer().getUniqueId()));
-            h2PlayerMap.put(p, h2Player);
-        } catch (SQLException ex) {
-            throw new UncheckedSQLException(ex);
-        }
-
+        h2OfflineCache.stream()
+                .filter(it -> it.getUniqueId().equals(e.getPlayer().getUniqueId()))
+                .findAny()
+                .ifPresentOrElse(h2Player -> {
+                    h2OfflineCache.remove(h2Player);
+                    h2PlayerCache.put(p, h2Player);
+                }, () -> {
+                    try (Connection connection = hikariDataSource.getConnection()) {
+                        PreparedStatement replace = connection.prepareStatement("""
+                                MERGE INTO players AS t USING (VALUES(?, ?, ?, ?))
+                                    AS s(unique_id, name, global_muted, private_muted)
+                                    ON t.unique_id = s.unique_id
+                                WHEN MATCHED THEN
+                                    UPDATE SET name = s.name
+                                WHEN NOT MATCHED THEN
+                                    INSERT VALUES(s.unique_id, s.name, s.global_muted, s.private_muted);
+                                """);
+                        replace.setObject(1, p.getUniqueId());
+                        replace.setString(2, p.getName());
+                        replace.setBoolean(3, false);
+                        replace.setBoolean(4, false);
+                        replace.execute();
+                        H2Player h2Player = new H2Player(this, p.getUniqueId(), p.getName(),
+                                false, false, loadIgnoreList(connection, e.getPlayer().getUniqueId()));
+                        h2PlayerCache.put(e.getPlayer(), h2Player);
+                    } catch (SQLException ex) {
+                        throw new UncheckedSQLException(ex);
+                    }
+                });
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        h2PlayerMap.remove(e.getPlayer());
+        h2PlayerCache.remove(e.getPlayer());
     }
-
 
     public static H2PlayerRepository create(Plugin plugin, String jdbcUrl) throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
