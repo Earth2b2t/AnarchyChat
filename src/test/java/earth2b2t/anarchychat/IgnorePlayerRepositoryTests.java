@@ -3,12 +3,10 @@ package earth2b2t.anarchychat;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import com.google.common.jimfs.Jimfs;
 import earth2b2t.anarchychat.h2.H2PlayerRepository;
 import earth2b2t.anarchychat.ignore.IgnorePlayer;
 import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.anarchychat.ignore.IgnoreType;
-import earth2b2t.anarchychat.json.JsonIgnorePlayerRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +32,6 @@ public class IgnorePlayerRepositoryTests {
 
     public static List<IgnorePlayerRepository> newIgnorePlayerRepositories() {
         return List.of(
-                JsonIgnorePlayerRepository.create(MockBukkit.createMockPlugin(), Jimfs.newFileSystem().getPath("dir")),
                 H2PlayerRepository.create(MockBukkit.createMockPlugin(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
         );
     }
