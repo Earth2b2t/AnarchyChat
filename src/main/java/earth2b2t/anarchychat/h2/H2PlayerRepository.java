@@ -101,16 +101,24 @@ public class H2PlayerRepository extends CachedPlayerRepository<H2Player> impleme
                     """);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 UUID uuid = (UUID) resultSet.getObject("unique_id");
                 Player player = Bukkit.getPlayer(uuid);
+
+                H2Player h2Player = offlineCache.stream()
+                        .filter(it -> it.getUniqueId().equals(uuid))
+                        .findAny()
+                        .orElse(null);
+
                 if (player != null) {
                     result.add(findByPlayer(player));
+                } else if (h2Player != null) {
+                    result.add(h2Player);
                 } else {
                     String name = resultSet.getString("name");
                     boolean globalMuted = resultSet.getBoolean("global_muted");
                     boolean privateMuted = resultSet.getBoolean("private_muted");
-                    H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
+                    h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
                     offlineCache.add(h2Player);
                     result.add(h2Player);
                 }
