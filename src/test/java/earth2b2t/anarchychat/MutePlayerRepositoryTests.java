@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class MutePlayerRepositoryTests {
         MockBukkit.unmock();
     }
 
-    public static List<MutePlayerRepository> newMutePlayerRepositories() throws SQLException {
+    public static List<MutePlayerRepository> newMutePlayerRepositories() {
         return List.of(
                 H2PlayerRepository.create(MockBukkit.createMockPlugin(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
         );

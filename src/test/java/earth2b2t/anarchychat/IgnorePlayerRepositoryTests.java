@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +32,7 @@ public class IgnorePlayerRepositoryTests {
         MockBukkit.unmock();
     }
 
-    public static List<IgnorePlayerRepository> newIgnorePlayerRepositories() throws SQLException {
+    public static List<IgnorePlayerRepository> newIgnorePlayerRepositories() {
         return List.of(
                 JsonIgnorePlayerRepository.create(MockBukkit.createMockPlugin(), Jimfs.newFileSystem().getPath("dir")),
                 H2PlayerRepository.create(MockBukkit.createMockPlugin(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
