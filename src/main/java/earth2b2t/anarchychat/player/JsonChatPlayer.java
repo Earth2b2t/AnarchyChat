@@ -58,5 +58,7 @@ public class JsonChatPlayer implements ChatPlayer {
             ignoreList.add(ignore);
             nameIndex.put(name, ignore);
         }
+
+        chatPlayerRepository.save(this);
     }
 }
