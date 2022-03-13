@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +41,23 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     @Override
     public H2Player findByPlayer(Player player) {
         return h2PlayerMap.get(player);
+    }
+
+    private ArrayList<Ignore> loadIgnoreList(Connection connection, UUID uuid) throws SQLException {
+        ArrayList<Ignore> ignoreList = new ArrayList<>();
+
+        PreparedStatement select = connection.prepareStatement("""
+                SELECT target FROM ignore_list WHERE player = ?;
+                """);
+        select.setObject(1, uuid);
+        select.execute();
+        ResultSet resultSet = select.executeQuery();
+
+        while (resultSet.next()) {
+            String target = resultSet.getString("target");
+            ignoreList.add(new Ignore(target, IgnoreType.HARD));
+        }
+        return ignoreList;
     }
 
     @Override
@@ -59,7 +75,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 String name = resultSet.getString("name");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
-                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, List.of()));
+                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
             } else {
                 return Optional.empty();
             }
@@ -85,7 +101,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 UUID uuid = (UUID) resultSet.getObject("unique_id");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
-                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, List.of()));
+                return Optional.of(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
             } else {
                 return Optional.empty();
             }
@@ -108,7 +124,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 String name = resultSet.getString("name");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
-                result.add(new H2Player(this, uuid, name, globalMuted, privateMuted, List.of()));
+                result.add(new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid)));
             }
         } catch (SQLException e) {
             throw new UncheckedSQLException(e);
@@ -176,21 +192,7 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        ArrayList<Ignore> ignoreList = new ArrayList<>();
-
         try (Connection connection = hikariDataSource.getConnection()) {
-            PreparedStatement select = connection.prepareStatement("""
-                    SELECT target FROM ignore_list WHERE player = ?;
-                    """);
-            select.setObject(1, p.getUniqueId());
-            select.execute();
-            ResultSet resultSet = select.executeQuery();
-
-            while (resultSet.next()) {
-                String target = resultSet.getString("target");
-                ignoreList.add(new Ignore(target, IgnoreType.HARD));
-            }
-
             PreparedStatement replace = connection.prepareStatement("""
                     MERGE INTO players AS t USING (VALUES(?, ?, ?, ?))
                         AS s(unique_id, name, global_muted, private_muted)
@@ -205,13 +207,13 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
             replace.setBoolean(3, false);
             replace.setBoolean(4, false);
             replace.execute();
-
+            H2Player h2Player = new H2Player(this, p.getUniqueId(), p.getName(),
+                    false, false, loadIgnoreList(connection, e.getPlayer().getUniqueId()));
+            h2PlayerMap.put(p, h2Player);
         } catch (SQLException ex) {
             throw new UncheckedSQLException(ex);
         }
 
-        H2Player h2Player = new H2Player(this, p.getUniqueId(), p.getName(), false, false, ignoreList);
-        h2PlayerMap.put(p, h2Player);
     }
 
     @EventHandler
