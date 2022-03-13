@@ -82,19 +82,19 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
                 false, false, loadIgnoreList(connection, p.getUniqueId()));
     }
 
-    @Override
-    public Optional<MutePlayer> findByUniqueId(UUID uuid) {
+    public Optional<MutePlayer> find(UUID uuid, String name) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) return Optional.of(findByPlayer(player));
 
         try (Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("""
-                    SELECT name, global_muted, private_muted FROM players WHERE unique_id = ?;
+                    SELECT unique_id, name, global_muted, private_muted FROM players WHERE unique_id = ?;
                     """);
             preparedStatement.setObject(1, uuid);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                String name = resultSet.getString("name");
+                if (uuid == null) uuid = (UUID) resultSet.getObject("unique_id");
+                if (name == null) name = resultSet.getString("name");
                 boolean globalMuted = resultSet.getBoolean("global_muted");
                 boolean privateMuted = resultSet.getBoolean("private_muted");
                 H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
@@ -109,29 +109,13 @@ public class H2PlayerRepository implements IgnorePlayerRepository, MutePlayerRep
     }
 
     @Override
-    public Optional<MutePlayer> findByName(String name) {
-        Player player = Bukkit.getPlayerExact(name);
-        if (player != null) return Optional.of(findByPlayer(player));
+    public Optional<MutePlayer> findByUniqueId(UUID uuid) {
+        return find(uuid, null);
+    }
 
-        try (Connection connection = hikariDataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
-                    SELECT unique_id, global_muted, private_muted FROM players WHERE name = ?;
-                    """);
-            preparedStatement.setObject(1, name);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                UUID uuid = (UUID) resultSet.getObject("unique_id");
-                boolean globalMuted = resultSet.getBoolean("global_muted");
-                boolean privateMuted = resultSet.getBoolean("private_muted");
-                H2Player h2Player = new H2Player(this, uuid, name, globalMuted, privateMuted, loadIgnoreList(connection, uuid));
-                h2OfflineCache.add(h2Player);
-                return Optional.of(h2Player);
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
-        }
+    @Override
+    public Optional<MutePlayer> findByName(String name) {
+        return find(null, name);
     }
 
     @Override
