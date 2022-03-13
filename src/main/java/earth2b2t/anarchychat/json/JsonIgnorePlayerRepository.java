@@ -1,7 +1,9 @@
-package earth2b2t.anarchychat.ignore;
+package earth2b2t.anarchychat.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import earth2b2t.anarchychat.ignore.IgnorePlayer;
+import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.anarchychat.utils.LocalDateTimeTypeAdapter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Listener {
 
-    private final Map<Player, IgnorePlayer> chatPlayerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Player, IgnorePlayer> ignorePlayerMap = Collections.synchronizedMap(new HashMap<>());
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
             .setPrettyPrinting()
@@ -37,20 +39,20 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
     private final Path dataFolder;
 
     public static JsonIgnorePlayerRepository create(Plugin plugin, Path dataFolder) {
-        JsonIgnorePlayerRepository chatPlayerRepository = new JsonIgnorePlayerRepository(plugin, dataFolder);
-        Bukkit.getPluginManager().registerEvents(chatPlayerRepository, plugin);
+        JsonIgnorePlayerRepository ignorePlayerRepository = new JsonIgnorePlayerRepository(plugin, dataFolder);
+        Bukkit.getPluginManager().registerEvents(ignorePlayerRepository, plugin);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            JsonIgnorePlayer chatPlayer = chatPlayerRepository.load(player.getUniqueId(), player.getName());
-            chatPlayerRepository.chatPlayerMap.put(player, chatPlayer);
+            JsonIgnorePlayer ignorePlayer = ignorePlayerRepository.load(player.getUniqueId(), player.getName());
+            ignorePlayerRepository.ignorePlayerMap.put(player, ignorePlayer);
         }
 
-        return chatPlayerRepository;
+        return ignorePlayerRepository;
     }
 
     @Override
     public IgnorePlayer findByPlayer(Player player) {
-        return chatPlayerMap.get(player);
+        return ignorePlayerMap.get(player);
     }
 
     private Path getPath(UUID uuid) {
@@ -68,7 +70,7 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
                 Path path = getPath(uuid);
                 Files.createDirectories(dataFolder);
                 if (Files.exists(path)) {
-                    return gson.fromJson(Files.readString(path), JsonChatPlayerInfo.class).toJsonChatPlayer(this);
+                    return gson.fromJson(Files.readString(path), JsonIgnorePlayerInfo.class).toJsonignorePlayer(this);
                 } else {
                     return new JsonIgnorePlayer(this, uuid, name, new ArrayList<>());
                 }
@@ -78,12 +80,12 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
         }
     }
 
-    public void save(JsonIgnorePlayer chatPlayer) {
+    public void save(JsonIgnorePlayer ignorePlayer) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            synchronized (getLock(chatPlayer.getUniqueId())) {
+            synchronized (getLock(ignorePlayer.getUniqueId())) {
                 try {
                     Files.createDirectories(dataFolder);
-                    Files.writeString(getPath(chatPlayer.getUniqueId()), gson.toJson(new JsonChatPlayerInfo(chatPlayer)));
+                    Files.writeString(getPath(ignorePlayer.getUniqueId()), gson.toJson(new JsonIgnorePlayerInfo(ignorePlayer)));
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -93,11 +95,11 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        chatPlayerMap.put(e.getPlayer(), load(e.getPlayer().getUniqueId(), e.getPlayer().getName()));
+        ignorePlayerMap.put(e.getPlayer(), load(e.getPlayer().getUniqueId(), e.getPlayer().getName()));
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        chatPlayerMap.remove(e.getPlayer());
+        ignorePlayerMap.remove(e.getPlayer());
     }
 }

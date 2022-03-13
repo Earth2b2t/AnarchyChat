@@ -1,5 +1,8 @@
-package earth2b2t.anarchychat.ignore;
+package earth2b2t.anarchychat.h2;
 
+import earth2b2t.anarchychat.ignore.Ignore;
+import earth2b2t.anarchychat.ignore.IgnorePlayer;
+import earth2b2t.anarchychat.ignore.IgnoreType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,9 +16,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class JsonIgnorePlayer implements IgnorePlayer {
+public class H2IgnorePlayer implements IgnorePlayer {
 
-    private final JsonIgnorePlayerRepository chatPlayerRepository;
+    private final H2IgnorePlayerRepository ignorePlayerRepository;
     private final UUID uniqueId;
     private final String name;
     private final List<Ignore> ignoreList;
@@ -23,12 +26,12 @@ public class JsonIgnorePlayer implements IgnorePlayer {
     private String lastMessageSentBy;
     private LocalDateTime lastMessageReceivedAt;
 
-    public JsonIgnorePlayer(JsonIgnorePlayerRepository chatPlayerRepository, UUID uniqueId, String name, List<Ignore> ignoreList) {
-        this.chatPlayerRepository = chatPlayerRepository;
+    public H2IgnorePlayer(H2IgnorePlayerRepository ignorePlayerRepository, UUID uniqueId, String name, List<Ignore> ignoreList) {
+        this.ignorePlayerRepository = ignorePlayerRepository;
         this.uniqueId = uniqueId;
         this.name = name;
-        this.ignoreList = Collections.synchronizedList(new ArrayList<>(ignoreList));
-        this.nameIndex = Collections.synchronizedMap(new HashMap<>());
+        this.ignoreList = new ArrayList<>(ignoreList);
+        this.nameIndex = new HashMap<>();
         for (Ignore ignore : ignoreList) {
             nameIndex.put(ignore.getName(), ignore);
         }
@@ -59,6 +62,6 @@ public class JsonIgnorePlayer implements IgnorePlayer {
             nameIndex.put(name, ignore);
         }
 
-        chatPlayerRepository.save(this);
+        ignorePlayerRepository.setIgnoreType(this, name, ignoreType);
     }
 }
