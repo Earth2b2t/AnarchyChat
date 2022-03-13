@@ -38,18 +38,6 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
     private final Plugin plugin;
     private final Path dataFolder;
 
-    public static JsonIgnorePlayerRepository create(Plugin plugin, Path dataFolder) {
-        JsonIgnorePlayerRepository ignorePlayerRepository = new JsonIgnorePlayerRepository(plugin, dataFolder);
-        Bukkit.getPluginManager().registerEvents(ignorePlayerRepository, plugin);
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            JsonIgnorePlayer ignorePlayer = ignorePlayerRepository.load(player.getUniqueId(), player.getName());
-            ignorePlayerRepository.ignorePlayerMap.put(player, ignorePlayer);
-        }
-
-        return ignorePlayerRepository;
-    }
-
     @Override
     public IgnorePlayer findByPlayer(Player player) {
         return ignorePlayerMap.get(player);
@@ -102,4 +90,17 @@ public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Liste
     public void onPlayerQuit(PlayerQuitEvent e) {
         ignorePlayerMap.remove(e.getPlayer());
     }
+
+    public static JsonIgnorePlayerRepository create(Plugin plugin, Path dataFolder) {
+        JsonIgnorePlayerRepository ignorePlayerRepository = new JsonIgnorePlayerRepository(plugin, dataFolder);
+        Bukkit.getPluginManager().registerEvents(ignorePlayerRepository, plugin);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            JsonIgnorePlayer ignorePlayer = ignorePlayerRepository.load(player.getUniqueId(), player.getName());
+            ignorePlayerRepository.ignorePlayerMap.put(player, ignorePlayer);
+        }
+
+        return ignorePlayerRepository;
+    }
+
 }

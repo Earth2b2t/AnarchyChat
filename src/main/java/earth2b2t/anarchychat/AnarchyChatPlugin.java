@@ -6,7 +6,7 @@ import earth2b2t.anarchychat.command.IgnoreLangCommand;
 import earth2b2t.anarchychat.command.IgnoreListCommand;
 import earth2b2t.anarchychat.command.ReplyCommand;
 import earth2b2t.anarchychat.command.TellCommand;
-import earth2b2t.anarchychat.h2.H2IgnorePlayerRepository;
+import earth2b2t.anarchychat.h2.H2PlayerRepository;
 import earth2b2t.anarchychat.service.IgnoreService;
 import earth2b2t.anarchychat.service.Service;
 import earth2b2t.anarchychat.service.TellPreventService;
@@ -26,7 +26,7 @@ import java.util.Collections;
 public class AnarchyChatPlugin extends JavaPlugin {
 
     private final ArrayList<Service> services = new ArrayList<>();
-    private H2IgnorePlayerRepository ignorePlayerRepository;
+    private H2PlayerRepository ignorePlayerRepository;
 
     public AnarchyChatPlugin() {
         super();
@@ -48,7 +48,8 @@ public class AnarchyChatPlugin extends JavaPlugin {
             BukkitI18n i18n = BukkitI18n.get(this);
             i18n.setDefaultLanguage("en_us");
 
-            ignorePlayerRepository = H2IgnorePlayerRepository.create("jdbc:h2:file:" + new File(getDataFolder(), "data").getCanonicalPath());
+            ignorePlayerRepository = H2PlayerRepository.create(this,
+                    "jdbc:h2:file:" + new File(getDataFolder(), "data").getCanonicalPath());
 
             getCommand("ignore").setExecutor(new IgnoreCommand(ignorePlayerRepository));
             getCommand("ignorehard").setExecutor(new IgnoreHardCommand());

@@ -4,7 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.common.jimfs.Jimfs;
-import earth2b2t.anarchychat.h2.H2IgnorePlayerRepository;
+import earth2b2t.anarchychat.h2.H2PlayerRepository;
 import earth2b2t.anarchychat.ignore.IgnorePlayer;
 import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.anarchychat.ignore.IgnoreType;
@@ -36,13 +36,13 @@ public class IgnorePlayerRepositoryTests {
     public static List<IgnorePlayerRepository> newIgnorePlayerRepositories() throws SQLException {
         return List.of(
                 JsonIgnorePlayerRepository.create(MockBukkit.createMockPlugin(), Jimfs.newFileSystem().getPath("dir")),
-                H2IgnorePlayerRepository.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+                H2PlayerRepository.create(MockBukkit.createMockPlugin(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
         );
     }
 
     @ParameterizedTest
     @MethodSource("newIgnorePlayerRepositories")
-    public void testFindPlayer(IgnorePlayerRepository ignorePlayerRepository) {
+    public void testFindByPlayer(IgnorePlayerRepository ignorePlayerRepository) {
         PlayerMock playerMock = server.addPlayer();
         IgnorePlayer ignorePlayer = ignorePlayerRepository.findByPlayer(playerMock);
         assertEquals(0, ignorePlayer.getIgnoreList().size());
@@ -62,5 +62,4 @@ public class IgnorePlayerRepositoryTests {
         ignorePlayer.setIgnoreType(hard, IgnoreType.HARD);
         assertEquals(IgnoreType.HARD, ignorePlayer.getIgnoreType(hard));
     }
-
 }
