@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IgnoreListCommand implements CommandExecutor {
 
-    private static final int PAGE_SIZE = 17;
+    private static final int PAGE_SIZE = 16;
     private static final BukkitI18n i18n = BukkitI18n.get(IgnoreListCommand.class);
     private final IgnorePlayerRepository ignorePlayerRepository;
 
