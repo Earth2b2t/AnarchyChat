@@ -35,12 +35,12 @@ commands:
     aliases: [ "mute", "gmute" ]
   pmute:
     usage: /pmute <name>
-    description: Prevents a player from using private message
+    description: Prevent a player from using private message
     permission: anarchychat.pmute
   mutelist:
-    usage: /mute <name>
-    description: Mute a player
-    permission: anarchychat.mute
+    usage: /mutelist <name>
+    description: Show muted players
+    permission: anarchychat.mutelist
 permissions:
   anarchychat.ignore:
     default: true
@@ -55,6 +55,8 @@ permissions:
   anarchychat.ignorelang:
     default: true
   anarchychat.mute:
+    default: op
+  anarchychat.pmute:
     default: op
   anarchychat.mutelist:
     default: op
