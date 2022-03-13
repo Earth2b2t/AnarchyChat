@@ -1,8 +1,8 @@
 package earth2b2t.anarchychat.command;
 
-import earth2b2t.anarchychat.player.ChatPlayer;
-import earth2b2t.anarchychat.player.ChatPlayerRepository;
-import earth2b2t.anarchychat.player.IgnoreType;
+import earth2b2t.anarchychat.ignore.IgnorePlayer;
+import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
+import earth2b2t.anarchychat.ignore.IgnoreType;
 import earth2b2t.i18n.BukkitI18n;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class TellCommand implements CommandExecutor {
 
     private static final BukkitI18n i18n = BukkitI18n.get(TellCommand.class);
-    private final ChatPlayerRepository chatPlayerRepository;
+    private final IgnorePlayerRepository ignorePlayerRepository;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -39,8 +39,8 @@ public class TellCommand implements CommandExecutor {
             return true;
         }
 
-        ChatPlayer chatPlayer = chatPlayerRepository.findByPlayer(player);
-        IgnoreType ignoreType = chatPlayer.getIgnoreType(sender.getName());
+        IgnorePlayer ignorePlayer = ignorePlayerRepository.findByPlayer(player);
+        IgnoreType ignoreType = ignorePlayer.getIgnoreType(sender.getName());
         if (ignoreType != null && !(sender instanceof ConsoleCommandSender)) {
             i18n.print(sender, "anarchychat.tell.player-ignored", args[0]);
             return true;
@@ -50,8 +50,8 @@ public class TellCommand implements CommandExecutor {
         i18n.print(sender, "anarchychat.tell.message-sent", args[0], message);
         i18n.print(player, "anarchychat.tell.message-received", args[0], message);
 
-        chatPlayer.setLastMessageReceivedAt(LocalDateTime.now());
-        chatPlayer.setLastMessageSentBy(sender.getName());
+        ignorePlayer.setLastMessageReceivedAt(LocalDateTime.now());
+        ignorePlayer.setLastMessageSentBy(sender.getName());
 
         return true;
     }

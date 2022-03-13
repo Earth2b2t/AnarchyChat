@@ -1,7 +1,7 @@
 package earth2b2t.anarchychat.command;
 
-import earth2b2t.anarchychat.player.ChatPlayer;
-import earth2b2t.anarchychat.player.ChatPlayerRepository;
+import earth2b2t.anarchychat.ignore.IgnorePlayer;
+import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.i18n.BukkitI18n;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 public class ReplyCommand implements CommandExecutor {
 
     private static final BukkitI18n i18n = BukkitI18n.get(ReplyCommand.class);
-    private final ChatPlayerRepository chatPlayerRepository;
+    private final IgnorePlayerRepository ignorePlayerRepository;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -26,14 +26,14 @@ public class ReplyCommand implements CommandExecutor {
             return true;
         }
 
-        ChatPlayer chatPlayer = chatPlayerRepository.findByPlayer(player);
-        if (chatPlayer.getLastMessageSentBy() == null ||
-                chatPlayer.getLastMessageReceivedAt().plus(5, ChronoUnit.MINUTES).isBefore(LocalDateTime.now())) {
+        IgnorePlayer ignorePlayer = ignorePlayerRepository.findByPlayer(player);
+        if (ignorePlayer.getLastMessageSentBy() == null ||
+                ignorePlayer.getLastMessageReceivedAt().plus(5, ChronoUnit.MINUTES).isBefore(LocalDateTime.now())) {
             i18n.print(sender, "anarchychat.reply.message-not-received");
             return true;
         }
 
-        Bukkit.dispatchCommand(sender, "tell " + chatPlayer.getLastMessageSentBy() + " " + String.join(" ", args));
+        Bukkit.dispatchCommand(sender, "tell " + ignorePlayer.getLastMessageSentBy() + " " + String.join(" ", args));
 
         return true;
     }

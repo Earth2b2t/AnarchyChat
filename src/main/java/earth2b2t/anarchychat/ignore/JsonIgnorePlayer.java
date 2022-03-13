@@ -1,4 +1,4 @@
-package earth2b2t.anarchychat.player;
+package earth2b2t.anarchychat.ignore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class JsonChatPlayer implements ChatPlayer {
+public class JsonIgnorePlayer implements IgnorePlayer {
 
-    private final JsonChatPlayerRepository chatPlayerRepository;
+    private final JsonIgnorePlayerRepository chatPlayerRepository;
     private final UUID uniqueId;
     private final String name;
     private final List<Ignore> ignoreList;
@@ -23,7 +23,7 @@ public class JsonChatPlayer implements ChatPlayer {
     private String lastMessageSentBy;
     private LocalDateTime lastMessageReceivedAt;
 
-    public JsonChatPlayer(JsonChatPlayerRepository chatPlayerRepository, UUID uniqueId, String name, List<Ignore> ignoreList) {
+    public JsonIgnorePlayer(JsonIgnorePlayerRepository chatPlayerRepository, UUID uniqueId, String name, List<Ignore> ignoreList) {
         this.chatPlayerRepository = chatPlayerRepository;
         this.uniqueId = uniqueId;
         this.name = name;

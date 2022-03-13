@@ -6,7 +6,7 @@ import earth2b2t.anarchychat.command.IgnoreLangCommand;
 import earth2b2t.anarchychat.command.IgnoreListCommand;
 import earth2b2t.anarchychat.command.ReplyCommand;
 import earth2b2t.anarchychat.command.TellCommand;
-import earth2b2t.anarchychat.player.JsonChatPlayerRepository;
+import earth2b2t.anarchychat.ignore.JsonIgnorePlayerRepository;
 import earth2b2t.anarchychat.service.IgnoreService;
 import earth2b2t.anarchychat.service.Service;
 import earth2b2t.anarchychat.service.TellPreventService;
@@ -34,7 +34,7 @@ public class AnarchyChatPlugin extends JavaPlugin {
         BukkitI18n i18n = BukkitI18n.get(this);
         i18n.setDefaultLanguage("en_us");
 
-        JsonChatPlayerRepository chatPlayerRepository = JsonChatPlayerRepository.create(this, getDataFolder().toPath().resolve("players"));
+        JsonIgnorePlayerRepository chatPlayerRepository = JsonIgnorePlayerRepository.create(this, getDataFolder().toPath().resolve("players"));
 
         getCommand("ignore").setExecutor(new IgnoreCommand(chatPlayerRepository));
         getCommand("ignorehard").setExecutor(new IgnoreHardCommand());

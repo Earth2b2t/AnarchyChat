@@ -1,4 +1,4 @@
-package earth2b2t.anarchychat.player;
+package earth2b2t.anarchychat.ignore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener {
+public class JsonIgnorePlayerRepository implements IgnorePlayerRepository, Listener {
 
-    private final Map<Player, ChatPlayer> chatPlayerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Player, IgnorePlayer> chatPlayerMap = Collections.synchronizedMap(new HashMap<>());
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
             .setPrettyPrinting()
@@ -36,12 +36,12 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
     private final Plugin plugin;
     private final Path dataFolder;
 
-    public static JsonChatPlayerRepository create(Plugin plugin, Path dataFolder) {
-        JsonChatPlayerRepository chatPlayerRepository = new JsonChatPlayerRepository(plugin, dataFolder);
+    public static JsonIgnorePlayerRepository create(Plugin plugin, Path dataFolder) {
+        JsonIgnorePlayerRepository chatPlayerRepository = new JsonIgnorePlayerRepository(plugin, dataFolder);
         Bukkit.getPluginManager().registerEvents(chatPlayerRepository, plugin);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            JsonChatPlayer chatPlayer = chatPlayerRepository.load(player.getUniqueId(), player.getName());
+            JsonIgnorePlayer chatPlayer = chatPlayerRepository.load(player.getUniqueId(), player.getName());
             chatPlayerRepository.chatPlayerMap.put(player, chatPlayer);
         }
 
@@ -49,7 +49,7 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
     }
 
     @Override
-    public ChatPlayer findByPlayer(Player player) {
+    public IgnorePlayer findByPlayer(Player player) {
         return chatPlayerMap.get(player);
     }
 
@@ -61,7 +61,7 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
         return (getClass().getSimpleName() + "-" + uuid).intern();
     }
 
-    public JsonChatPlayer load(UUID uuid, String name) {
+    public JsonIgnorePlayer load(UUID uuid, String name) {
         synchronized (getLock(uuid)) {
             // load player file
             try {
@@ -70,7 +70,7 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
                 if (Files.exists(path)) {
                     return gson.fromJson(Files.readString(path), JsonChatPlayerInfo.class).toJsonChatPlayer(this);
                 } else {
-                    return new JsonChatPlayer(this, uuid, name, new ArrayList<>());
+                    return new JsonIgnorePlayer(this, uuid, name, new ArrayList<>());
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -78,7 +78,7 @@ public class JsonChatPlayerRepository implements ChatPlayerRepository, Listener 
         }
     }
 
-    public void save(JsonChatPlayer chatPlayer) {
+    public void save(JsonIgnorePlayer chatPlayer) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             synchronized (getLock(chatPlayer.getUniqueId())) {
                 try {

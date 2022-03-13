@@ -1,10 +1,10 @@
-package earth2b2t.anarchychat.player;
+package earth2b2t.anarchychat.ignore;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface ChatPlayer {
+public interface IgnorePlayer {
 
     UUID getUniqueId();
 

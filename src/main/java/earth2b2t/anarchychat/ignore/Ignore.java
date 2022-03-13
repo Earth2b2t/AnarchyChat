@@ -1,4 +1,4 @@
-package earth2b2t.anarchychat.player;
+package earth2b2t.anarchychat.ignore;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

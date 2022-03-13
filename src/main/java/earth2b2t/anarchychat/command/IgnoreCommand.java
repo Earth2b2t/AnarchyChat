@@ -1,8 +1,8 @@
 package earth2b2t.anarchychat.command;
 
-import earth2b2t.anarchychat.player.ChatPlayer;
-import earth2b2t.anarchychat.player.ChatPlayerRepository;
-import earth2b2t.anarchychat.player.IgnoreType;
+import earth2b2t.anarchychat.ignore.IgnorePlayer;
+import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
+import earth2b2t.anarchychat.ignore.IgnoreType;
 import earth2b2t.i18n.BukkitI18n;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class IgnoreCommand implements CommandExecutor {
 
     private static final BukkitI18n i18n = BukkitI18n.get(IgnoreCommand.class);
-    private final ChatPlayerRepository chatPlayerRepository;
+    private final IgnorePlayerRepository ignorePlayerRepository;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -31,7 +31,7 @@ public class IgnoreCommand implements CommandExecutor {
             i18n.print(sender, "anarchychat.ignore.player-name-too-long");
         }
 
-        ChatPlayer chatPlayer = chatPlayerRepository.findByPlayer(player);
+        IgnorePlayer ignorePlayer = ignorePlayerRepository.findByPlayer(player);
 
         IgnoreType ignoreType;
         if (args.length > 1) {
@@ -44,14 +44,14 @@ public class IgnoreCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            if (chatPlayer.getIgnoreType(args[0]) == null) {
+            if (ignorePlayer.getIgnoreType(args[0]) == null) {
                 ignoreType = IgnoreType.SOFT;
             } else {
                 ignoreType = null;
             }
         }
 
-        chatPlayer.setIgnoreType(args[0], ignoreType);
+        ignorePlayer.setIgnoreType(args[0], ignoreType);
         if (ignoreType == null) {
             i18n.print(sender, "anarchychat.ignore.player-unignored", args[0]);
         } else if (ignoreType == IgnoreType.HARD) {

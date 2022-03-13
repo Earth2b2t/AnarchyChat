@@ -1,7 +1,7 @@
 package earth2b2t.anarchychat.command;
 
-import earth2b2t.anarchychat.player.ChatPlayerRepository;
-import earth2b2t.anarchychat.player.Ignore;
+import earth2b2t.anarchychat.ignore.Ignore;
+import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.i18n.BukkitI18n;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -23,7 +23,7 @@ public class IgnoreListCommand implements CommandExecutor {
 
     private static final int PAGE_SIZE = 17;
     private static final BukkitI18n i18n = BukkitI18n.get(IgnoreListCommand.class);
-    private final ChatPlayerRepository chatPlayerRepository;
+    private final IgnorePlayerRepository ignorePlayerRepository;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -41,7 +41,7 @@ public class IgnoreListCommand implements CommandExecutor {
             }
         }
 
-        List<Ignore> ignoreList = new ArrayList<>(chatPlayerRepository.findByPlayer(player).getIgnoreList());
+        List<Ignore> ignoreList = new ArrayList<>(ignorePlayerRepository.findByPlayer(player).getIgnoreList());
         Collections.reverse(ignoreList);
 
         if (ignoreList.isEmpty()) {

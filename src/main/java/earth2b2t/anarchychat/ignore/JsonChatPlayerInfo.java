@@ -1,4 +1,4 @@
-package earth2b2t.anarchychat.player;
+package earth2b2t.anarchychat.ignore;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class JsonChatPlayerInfo {
     private final String name;
     private final List<String> ignoreList;
 
-    public JsonChatPlayerInfo(JsonChatPlayer player) {
+    public JsonChatPlayerInfo(JsonIgnorePlayer player) {
         this(player.getUniqueId(), player.getName(),
                 player.getIgnoreList().stream()
                         .filter(it -> it.getIgnoreType() == IgnoreType.HARD)
@@ -21,8 +21,8 @@ public class JsonChatPlayerInfo {
                         .toList());
     }
 
-    public JsonChatPlayer toJsonChatPlayer(JsonChatPlayerRepository chatPlayerRepository) {
-        return new JsonChatPlayer(chatPlayerRepository, uniqueId, name,
+    public JsonIgnorePlayer toJsonChatPlayer(JsonIgnorePlayerRepository chatPlayerRepository) {
+        return new JsonIgnorePlayer(chatPlayerRepository, uniqueId, name,
                 ignoreList.stream().map(it -> new Ignore(it, IgnoreType.HARD)).toList());
     }
 }
