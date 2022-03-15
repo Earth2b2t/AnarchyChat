@@ -15,9 +15,6 @@ repositories {
         url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
     maven {
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/public/'
-    }
-    maven {
         url = 'https://jitpack.io'
     }
 }
@@ -53,4 +50,8 @@ shadowJar {
     relocate 'org.h2', 'earth2b2t.anarchychat.h2'
     relocate 'com.zaxxer.hikari', 'earth2b2t.anarchychat.hikari'
     relocate 'earth2b2t.i18n', 'earth2b2t.anarchychat.i18n'
+
+    dependencies {
+        exclude dependency('org.slf4j:slf4j-api')
+    }
 }
