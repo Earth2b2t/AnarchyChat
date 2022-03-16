@@ -197,8 +197,8 @@ public class H2PlayerRepository extends CachedPlayerRepository<H2Player> impleme
                     CREATE TABLE IF NOT EXISTS players(
                         unique_id UUID PRIMARY KEY,
                         name VARCHAR NOT NULL,
-                        global_muted BOOL,
-                        private_muted BOOL
+                        global_muted BOOL NOT NULL,
+                        private_muted BOOL NOT NULL
                     );
                     CREATE TABLE IF NOT EXISTS ignore_list(
                         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -207,7 +207,6 @@ public class H2PlayerRepository extends CachedPlayerRepository<H2Player> impleme
                         FOREIGN KEY (player) REFERENCES players(unique_id)
                     );
                     CREATE INDEX IF NOT EXISTS ix_players_name ON players(name);
-                    CREATE INDEX IF NOT EXISTS ix_ignore_list_player ON ignore_list(player);
                     """);
 
             preparedStatement.execute();
