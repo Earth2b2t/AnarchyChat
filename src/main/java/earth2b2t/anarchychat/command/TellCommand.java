@@ -7,6 +7,7 @@ import earth2b2t.anarchychat.mute.MutePlayerRepository;
 import earth2b2t.i18n.BukkitI18n;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -60,6 +61,7 @@ public class TellCommand implements CommandExecutor {
         }
 
         String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        message = ChatColor.stripColor(message);
         i18n.print(sender, "anarchychat.tell.message-sent", args[0], message);
         i18n.print(target, "anarchychat.tell.message-received", player.getName(), message);
 
