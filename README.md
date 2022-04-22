@@ -7,6 +7,7 @@ A simple chat management plugin
 * Hard to abuse because ignore list is name based
 * High performance thanks to H2 SQL
 * Disables vanilla /tell command
+* Placeholder support
 
 ## Commands
 
@@ -31,3 +32,30 @@ A simple chat management plugin
 /mute
 
 ![image](https://user-images.githubusercontent.com/26406334/158069845-34667f6e-5c91-4c13-8d13-43ea30184dae.png)
+
+## PlaceholderAPI support
+
+You can use PlaceholderAPI or pre-defined placeholders instead.
+
+Open config.yml and change format however you like.
+
+```yaml
+format: "[{world}]<{playerName} {player_uuid}>{message}"
+```
+
+Result will be:
+
+```
+[world]<Toshimichi0915 1f29089b-7a33-4506-82b2-3637e0f8f82e>test
+```
+
+Note that {player_uuid} is automatically replaced by %player_uuid% before being passed to PlaceholderAPI.
+Although both %player_uuid% and {player_uuid} should work, {player_uuid} is more preferred.
+
+Pre-defined placeholders:
+
+| String       | Description      |
+|--------------|------------------|
+| {playerName} | Player's name    |
+| {world}      | Player's world   |
+| {message}    | Player's message |

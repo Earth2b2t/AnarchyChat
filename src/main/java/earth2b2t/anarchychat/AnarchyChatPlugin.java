@@ -12,6 +12,9 @@ import earth2b2t.anarchychat.command.TellCommand;
 import earth2b2t.anarchychat.h2.H2PlayerRepository;
 import earth2b2t.anarchychat.ignore.IgnorePlayerRepository;
 import earth2b2t.anarchychat.mute.MutePlayerRepository;
+import earth2b2t.anarchychat.placeholder.EmptyPlaceholderResolver;
+import earth2b2t.anarchychat.placeholder.PlaceholderApiResolver;
+import earth2b2t.anarchychat.placeholder.PlaceholderResolver;
 import earth2b2t.anarchychat.service.IgnoreService;
 import earth2b2t.anarchychat.service.Service;
 import earth2b2t.anarchychat.service.TellPreventService;
@@ -48,6 +51,8 @@ public class AnarchyChatPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         BukkitI18n i18n = BukkitI18n.get(this);
         i18n.setDefaultLanguage("en_us");
 
@@ -70,7 +75,14 @@ public class AnarchyChatPlugin extends JavaPlugin {
         getCommand("reply").setExecutor(new ReplyCommand(ignorePlayerRepository));
         getCommand("tell").setExecutor(new TellCommand(ignorePlayerRepository, mutePlayerRepository));
 
-        register(new IgnoreService(ignorePlayerRepository, mutePlayerRepository));
+        PlaceholderResolver placeholderResolver;
+        if (PlaceholderApiResolver.isAvailable()) {
+            placeholderResolver = new PlaceholderApiResolver();
+        } else {
+            placeholderResolver = new EmptyPlaceholderResolver();
+        }
+
+        register(new IgnoreService(ignorePlayerRepository, mutePlayerRepository, placeholderResolver, getConfig().getString("format")));
         register(new TellPreventService());
     }
 

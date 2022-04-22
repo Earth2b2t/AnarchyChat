@@ -1,4 +1,4 @@
-package earth2b2t.anarchychat;
+package earth2b2t.anarchychat.repository;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
