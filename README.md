@@ -1,5 +1,7 @@
 # AnarchyChat
 
+![thumbnail](https://user-images.githubusercontent.com/26406334/165263241-ccd61c5c-775e-430f-a89f-84f2dcacc171.png)
+
 A simple chat management plugin
 
 ## Features
