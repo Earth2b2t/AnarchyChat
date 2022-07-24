@@ -15,12 +15,12 @@ repositories {
         url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
     maven {
-        url = 'https://jitpack.io'
+        url = 'https://repo.2b2t.earth/repository/maven-snapshots/'
     }
 }
 
 dependencies {
-    implementation 'com.github.Earth2b2t.I18n:i18n-bukkit:1.2.14'
+    implementation 'earth2b2t:i18n-bukkit:2.0.1-SNAPSHOT'
     implementation 'com.h2database:h2:2.1.210'
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
