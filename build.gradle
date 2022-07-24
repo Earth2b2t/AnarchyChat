@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'earth2b2t'
-version '1.0.1'
+version '1.1.0'
 
 repositories {
     mavenCentral()
@@ -12,7 +12,10 @@ repositories {
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
     maven {
-        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+        url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
     maven {
         url = 'https://repo.2b2t.earth/repository/maven-snapshots/'
@@ -27,15 +30,18 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     testImplementation 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
 
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+
     compileOnly 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-    testImplementation 'com.github.seeseemelk:MockBukkit-v1.18:1.15.5'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.18:1.24.1'
 }
 
 test {
