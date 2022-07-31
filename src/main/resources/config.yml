@@ -1,1 +1,1 @@
-format: "[{world}]<{playerName}>{message}"
+format: "[{world}]<{playerName}> {message}"
