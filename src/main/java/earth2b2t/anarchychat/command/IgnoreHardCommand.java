@@ -9,7 +9,8 @@ public class IgnoreHardCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Bukkit.dispatchCommand(sender, "ignore " + String.join(" ", args) + " hard");
+        String concat = args.length == 0 ? "" : String.join(" ", args);
+        Bukkit.dispatchCommand(sender, "ignore " + concat + " hard");
         return true;
     }
 }
