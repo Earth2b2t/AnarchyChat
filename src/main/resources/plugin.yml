@@ -1,4 +1,4 @@
-name: AnarhyChat
+name: AnarchyChat
 version: 1.1.0
 main: earth2b2t.anarchychat.AnarchyChatPlugin
 commands:
