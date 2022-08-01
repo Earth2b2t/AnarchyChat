@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'earth2b2t:i18n-bukkit:2.0.1-SNAPSHOT'
+    implementation 'earth2b2t:i18n-bukkit:2.0.3-SNAPSHOT'
     implementation 'com.h2database:h2:2.1.210'
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
