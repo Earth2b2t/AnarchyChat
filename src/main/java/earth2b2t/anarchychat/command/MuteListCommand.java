@@ -84,7 +84,7 @@ public class MuteListCommand implements CommandExecutor {
                 .append("  >")
                 .color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(i18n.plain(sender, "anarchychat.mutelist.go-to-next"))))
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mutelist " + page + 1))
+                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mutelist " + (page + 1)))
                 .append("  >>")
                 .color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(i18n.plain(sender, "anarchychat.mutelist.go-to-bottom"))))

@@ -86,7 +86,7 @@ public class IgnoreListCommand implements CommandExecutor {
                 .append("  >")
                 .color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(i18n.plain(sender, "anarchychat.ignorelist.go-to-next"))))
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ignorelist " + page + 1))
+                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ignorelist " + (page + 1)))
                 .append("  >>")
                 .color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(i18n.plain(sender, "anarchychat.ignorelist.go-to-bottom"))))
